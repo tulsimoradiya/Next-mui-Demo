@@ -1,95 +1,118 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { TextField, Button, Grid, Box } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Link from "next/link";
 
-export default function Home() {
+const LoginPage = () => {
+  const router = useRouter();
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+  console.log("loginData", loginData);
+  console.log("setLoginData", setLoginData);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/Dashboard");
+    }
+    console.log("token", token);
+  }, []);
+
+  const authenticateToken = async (token) => {
+    try {
+      const response = await fetch(
+        "https://24ec-2405-201-200d-159-1431-2be7-aafe-518d.ngrok-free.app/user/login-api/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("DATA", data);
+        router.push("/Dashboard");
+      } else {
+        router.push("/signup");
+      }
+    } catch (error) {
+      router.push("/signup");
+    }
+  };
+  console.log("authenticateToken", authenticateToken);
+
+  const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    setLoginData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setLoginData("");
+    console.log("Login Data:", loginData);
+
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        await authenticateToken(token);
+      }
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+    <Grid textAlign="center">
+      <form onSubmit={handleLoginSubmit}>
+        <h3>Welcome Back!</h3>
+        {/* <Typography variant="h5">Login</Typography> */}
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              type="email"
+              name="email"
+              label="Email"
+              variant="outlined"
+              value={loginData.email}
+              onChange={handleLoginChange}
             />
-          </a>
-        </div>
-      </div>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              type="password"
+              name="password"
+              label="Password"
+              variant="outlined"
+              value={loginData.password}
+              onChange={handleLoginChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Link
+              href="/Dashboard"
+              style={{ textDecoration: "none !important", color: "inherite" }}
+            >
+              <Typography sx={{ WebkitTextStrokeWidth: "thin" }}>
+                Login
+              </Typography>
+            </Link>
+          </Grid>
+        </Grid>
+        <Box mt={2}>
+          <Link href="/Signup">Signup</Link>
+        </Box>
+      </form>
+    </Grid>
+  );
+};
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default LoginPage;
