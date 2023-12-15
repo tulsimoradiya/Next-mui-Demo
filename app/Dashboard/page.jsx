@@ -1,5 +1,7 @@
 "use client";
 import * as React from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -10,6 +12,9 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -70,11 +75,19 @@ function a11yProps(index) {
   };
 }
 export default function PersistentDrawerLeft() {
+  const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event, newValue) => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/Signup");
+    }
+  }, []);
+
+  const handleChange = (newValue) => {
     setValue(newValue);
   };
   const handleDrawerOpen = () => {
@@ -83,6 +96,16 @@ export default function PersistentDrawerLeft() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const opens = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    localStorage.removeItem("token");
+    setAnchorEl(null);
+    router.push("/");
   };
 
   return (
@@ -117,9 +140,26 @@ export default function PersistentDrawerLeft() {
                 <Tab label="Settings" {...a11yProps(2)} />
               </Tabs>
             </Box>
-            <Box sx={{ mt: 2 }}>
-              <button>LogOut</button>
-            </Box>
+            <Button
+              id="basic-button"
+              aria-controls={opens ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={opens ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              User
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={opens}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem onClick={handleClose}>Logout</MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
       </AppBar>

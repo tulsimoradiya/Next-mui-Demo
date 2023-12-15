@@ -1,30 +1,33 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { TextField, Grid, Typography } from "@mui/material";
 import Link from "next/link";
 
 const SignupForm = () => {
+  const router = useRouter();
   const [signupData, setSignupData] = useState({
-    FristName: "",
-    email: "",
+    username: "",
+    first_name: "",
+    last_name: "",
     password: "",
+    email: "",
   });
 
   const handleSignupChange = (e) => {
     const { name, value } = e.target;
+    console.log("Name:", name);
+    console.log("Value:", value);
     setSignupData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
-
   const handleSignupSubmit = async function (e) {
     e.preventDefault();
-    // setSignupData("");
-    // console.log("Signup Data:", signupData);
     try {
       const response = await fetch(
-        "https://fccc-2405-201-200d-159-4c69-f3f-a912-134c.ngrok-free.app/user/register-api/",
+        "https://a50b-49-43-32-233.ngrok-free.app/user/register-api/",
         {
           method: "POST",
           headers: {
@@ -33,14 +36,16 @@ const SignupForm = () => {
           body: JSON.stringify(signupData),
         }
       );
-      console.log(response);
-
-      if (!response.ok) {
+      console.log("Response:", response);
+      console.log("hello");
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Data:", data);
+        const token = data.tokens.access; 
+        localStorage.setItem("token", token);
+        router.push("/");
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const data = await response.json();
-      localStorage.setItem("token", token);
-      console.log("data", data);
     } catch (error) {
       console.log("error", error);
     }
@@ -48,36 +53,36 @@ const SignupForm = () => {
 
   return (
     <Grid textAlign="center">
-      <form onSubmit={handleSignupSubmit}>
+      <form >
         <h3>Welcome to Sign-Up Page</h3>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
               type="text"
-              name="UserName"
-              label="UserName"
+              name="username"
+              label="username"
               variant="outlined"
-              value={signupData.name}
+              value={signupData.username}
               onChange={handleSignupChange}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               type="text"
-              name="FristName"
-              label="FristName"
+              name="first_name"
+              label="first_name"
               variant="outlined"
-              value={signupData.name}
+              value={signupData.first_name}
               onChange={handleSignupChange}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               type="text"
-              name="LastName"
-              label="LastName"
+              name="last_name"
+              label="last_name"
               variant="outlined"
-              value={signupData.name}
+              value={signupData.last_name}
               onChange={handleSignupChange}
             />
           </Grid>
@@ -85,7 +90,7 @@ const SignupForm = () => {
             <TextField
               type="email"
               name="email"
-              label="Email"
+              label="email"
               variant="outlined"
               value={signupData.email}
               onChange={handleSignupChange}
@@ -105,6 +110,7 @@ const SignupForm = () => {
             <Link
               href="/"
               style={{ textDecoration: "none !important", color: "inherite" }}
+              onClick={handleSignupSubmit}
             >
               <Typography sx={{ WebkitTextStrokeWidth: "thin" }}>
                 Sign Up
