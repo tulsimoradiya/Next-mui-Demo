@@ -74,11 +74,13 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-export default function PersistentDrawerLeft() {
+export default function PersistentDrawerLeft({ children }) {
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(0);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const opens = Boolean(anchorEl);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -87,7 +89,7 @@ export default function PersistentDrawerLeft() {
     }
   }, []);
 
-  const handleChange = (newValue) => {
+  const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   const handleDrawerOpen = () => {
@@ -97,8 +99,7 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const opens = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -210,6 +211,7 @@ export default function PersistentDrawerLeft() {
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
+        {children}
         {/* <Box textAlign="center">
         <h1>WELCOME TO DASHBOARD</h1>
         </Box> */}
