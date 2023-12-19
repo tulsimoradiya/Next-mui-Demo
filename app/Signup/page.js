@@ -16,8 +16,6 @@ const SignupForm = () => {
 
   const handleSignupChange = (e) => {
     const { name, value } = e.target;
-    console.log("Name:", name);
-    console.log("Value:", value);
     setSignupData((prevData) => ({
       ...prevData,
       [name]: value,

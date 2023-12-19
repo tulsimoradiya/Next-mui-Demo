@@ -1,7 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Dashboard from "../page";
-
+import Dashboard from "../Dashboard/page";
 
 function dashboard(){
     return(

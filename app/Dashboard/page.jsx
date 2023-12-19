@@ -18,6 +18,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import TableRowsIcon from '@mui/icons-material/TableRows';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Link from "next/link";
@@ -84,7 +86,7 @@ export default function PersistentDrawerLeft({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
+    if (token) {
       router.push("/Signup");
     }
   }, []);
@@ -187,24 +189,28 @@ export default function PersistentDrawerLeft({ children }) {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
+        <List sx={{backgroundColor: "#403f3f"}}>
           <Box sx={{ display: "grid", textAlign: "center", my: 2 }}>
+
             <Link
-              href="/Dashboard/aaa"
-              style={{ textDecoration: "none !important", color: "inherite" }}
+              href="/Dashboardd"
+              style={{ textDecoration: "none !important", color: "inherite",  display: "flex", justifyContent: "space-evenly", color: "#858585" }}
             >
-              <Typography sx={{ WebkitTextStrokeWidth: "thin" }}>
+              <DashboardIcon/>
+              <Typography sx={{ WebkitTextStrokeWidth: "thin", display: "contents" }}>
                 Dashboard
               </Typography>
             </Link>
             <Link
-              href="/Dashboard/bbb"
-              style={{ textDecoration: "none !important", color: "inherite" }}
+              href="/UserTable"
+              style={{ textDecoration: "none !important", color: "inherite", display: "flex", justifyContent: "space-evenly", marginTop: "10px", color: "#858585"}}
             >
-              <Typography sx={{ WebkitTextStrokeWidth: "thin" }}>
+              <TableRowsIcon/>
+              <Typography sx={{ WebkitTextStrokeWidth: "thin",}}>
                 UserTable
               </Typography>
             </Link>
+          
           </Box>
         </List>
         <Divider />
